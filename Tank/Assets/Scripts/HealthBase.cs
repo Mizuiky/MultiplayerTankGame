@@ -1,18 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class HealthBase : MonoBehaviour
+public class HealthBase
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Init()
     {
-        
+
+    }
+    public void Reset()
+    {
+
+    }
+    public void Damage(float value)
+    {
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UpdateUI()
     {
-        
+
     }
 }

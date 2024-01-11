@@ -6,4 +6,6 @@ public interface IPlayer
 {
     public string Name { get; set; }
 
+    public void Init();
+
 }

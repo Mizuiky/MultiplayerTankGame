@@ -4,26 +4,34 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IPlayer
 {
+    private IHealth _health;
+    private IInput _playerInput;
+
+    private IMovement _movement;
+    private Vector2 _movementInput;
+
     private string _name;
     public string Name { get { return _name; } set { _name = value; } }
 
-    private readonly IHealth _health;
-    private readonly IInput _input;
-    private readonly IMovement _movement;
-
-    private Vector2 _movementInput;
-
-    public Player(IHealth health, IMovement movement, IInput input)
+    public void Start()
     {
-        _health = health;
-        _movement = movement;
-        _input = input;
+        Init();    
+    }
+
+    public void Init()
+    {
+        _health = GetComponent<IHealth>();
+        _movement = GetComponent<IMovement>();
+        _playerInput = GetComponent<IInput>();
     }
 
     public void Update()
     {
-        _movementInput = _input.GetDirection();
-        _movement.Move(_movementInput);
+        _movementInput = _playerInput.GetDirection();
+
+        if(_movementInput != Vector2.zero)
+            _movement.Move(_movementInput);
+            
         _movement.Rotate();
     }
 }
