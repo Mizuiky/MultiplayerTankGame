@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "121422826728",
+    "project_id": "tankmultiplayer-326a5",
+    "storage_bucket": "tankmultiplayer-326a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121422826728:android:87432214e6ebb3cc05cd5d",
+        "android_client_info": {
+          "package_name": "com.priscila.tankmultiplayer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK1--4mglAAgDF9ju3rgFM4QTDXtyE4Dc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
