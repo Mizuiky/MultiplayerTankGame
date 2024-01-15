@@ -24,7 +24,7 @@ public class FormManager : MonoBehaviour
 
     private string _regexPattern;
 
-    //public AuthManager authManager;
+    public AuthManager authManager;
 
     public void Start()
     {
@@ -64,6 +64,7 @@ public class FormManager : MonoBehaviour
 
     public void OnSignUp()
     {
+        authManager.SignUpWithNewUser(_emailField.text, _passwordField.text);
         Debug.Log("SignUp");
     }
 
