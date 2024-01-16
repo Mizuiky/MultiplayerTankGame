@@ -5,6 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Threading.Tasks;
+using Firebase;
+using Firebase.Auth;
 
 public class FormManager : MonoBehaviour
 {
@@ -35,6 +38,8 @@ public class FormManager : MonoBehaviour
     {
         ToggleButtonStatus(false);
 
+        authManager.authCallBack += HandleAuthCallBack;
+
         _regexPattern = @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@"
         + @"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\."
         + @"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
@@ -62,10 +67,20 @@ public class FormManager : MonoBehaviour
         Debug.Log("Login");
     }
 
+    public IEnumerator HandleAuthCallBack(Task<Firebase.Auth.FirebaseUser> task, string operation)
+    {
+        yield return null;
+    }
+
     public void OnSignUp()
     {
         authManager.SignUpWithNewUser(_emailField.text, _passwordField.text);
         Debug.Log("SignUp");
+    }
+
+    private void OnDestroy()
+    {
+        authManager.authCallBack -= HandleAuthCallBack;
     }
 
     private void UpdateStatus(string message)
