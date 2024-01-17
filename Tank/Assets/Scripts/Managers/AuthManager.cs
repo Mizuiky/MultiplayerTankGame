@@ -1,15 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Firebase;
 using Firebase.Auth;
 using System.Threading.Tasks;
+using Firebase;
 
 public class AuthManager : MonoBehaviour
 {
     Firebase.Auth.FirebaseAuth auth;
 
-    public delegate IEnumerator AuthCallBack(Task<Firebase.Auth.FirebaseUser> task, string operation);
+    public delegate IEnumerator AuthCallBack(Task<Firebase.Auth.AuthResult> task, string operation);
     public event AuthCallBack authCallBack;
 
     public void Awake()
@@ -22,16 +21,12 @@ public class AuthManager : MonoBehaviour
     {
         auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
         {
-            if (task.IsFaulted || task.IsCanceled)
+            if(task.Result != null)
             {
-                Debug.LogError("Sorry there was an error creating your account, ERROR: " + task.Exception);
-                return;
-            }
-            else if (task.IsCompleted)
-            {
-                Firebase.Auth.AuthResult newUser = task.Result;
-                Debug.LogFormat("Welcome to Tanks Multiplayer {0}", newUser.User.Email);
-            }
+                Debug.Log("Before StartCoroutine");
+                StartCoroutine(authCallBack(task, "sign_up"));
+                Debug.Log("After StartCoroutine");
+            }      
         });
-    }
+    }   
 }

@@ -1,13 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Text.RegularExpressions;
-using System.Text;
 using System.Threading.Tasks;
-using Firebase;
 using Firebase.Auth;
+using UnityEngine.SceneManagement;
 
 public class FormManager : MonoBehaviour
 {
@@ -38,6 +36,8 @@ public class FormManager : MonoBehaviour
     {
         ToggleButtonStatus(false);
 
+        UpdateStatus("Connection Status");
+
         authManager.authCallBack += HandleAuthCallBack;
 
         _regexPattern = @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@"
@@ -67,9 +67,25 @@ public class FormManager : MonoBehaviour
         Debug.Log("Login");
     }
 
-    public IEnumerator HandleAuthCallBack(Task<Firebase.Auth.FirebaseUser> task, string operation)
+    public IEnumerator HandleAuthCallBack(Task<AuthResult> task, string operation)
     {
-        yield return null;
+        Debug.Log("handleAUTH");
+
+        if (task.IsFaulted || task.IsCanceled)
+            UpdateStatus("Sorry there was an error creating your account, ERROR: " + task.Exception.ToString());
+
+        else if (task.IsCompleted)
+        {
+            FirebaseUser newUser = task.Result.User;
+
+            UpdateStatus("Loading the Game Scene");
+
+            Debug.Log("status updated");
+
+            yield return new WaitForSeconds(1.5f);
+
+            SceneManager.LoadScene(1);
+        }
     }
 
     public void OnSignUp()
