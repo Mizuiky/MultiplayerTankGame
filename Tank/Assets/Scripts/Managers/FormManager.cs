@@ -38,7 +38,7 @@ public class FormManager : MonoBehaviour
 
         UpdateStatus("Connection Status");
 
-        authManager.authCallBack += HandleAuthCallBack;
+        authManager.userDataCallBack += HandleUserData;
 
         _regexPattern = @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@"
         + @"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\."
@@ -67,25 +67,17 @@ public class FormManager : MonoBehaviour
         Debug.Log("Login");
     }
 
-    public IEnumerator HandleAuthCallBack(Task<AuthResult> task, string operation)
+    public IEnumerator HandleUserData(Firebase.Auth.FirebaseUser user, string operation)
     {
-        Debug.Log("handleAUTH");
+        Debug.Log("handle User Data");
 
-        if (task.IsFaulted || task.IsCanceled)
-            UpdateStatus("Sorry there was an error creating your account, ERROR: " + task.Exception.ToString());
+        Debug.Log("Loading the Game Scene");
 
-        else if (task.IsCompleted)
-        {
-            FirebaseUser newUser = task.Result.User;
+        yield return new WaitForSeconds(1.5f);
 
-            UpdateStatus("Loading the Game Scene");
+        Debug.Log("will active new scene");
 
-            Debug.Log("status updated");
-
-            yield return new WaitForSeconds(1.5f);
-
-            SceneManager.LoadScene(1);
-        }
+        SceneManager.LoadScene(1);
     }
 
     public void OnSignUp()
@@ -96,7 +88,7 @@ public class FormManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        authManager.authCallBack -= HandleAuthCallBack;
+        authManager.userDataCallBack -= HandleUserData;
     }
 
     private void UpdateStatus(string message)

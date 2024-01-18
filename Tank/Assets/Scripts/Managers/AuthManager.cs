@@ -3,13 +3,14 @@ using UnityEngine;
 using Firebase.Auth;
 using System.Threading.Tasks;
 using Firebase;
+using System;
 
 public class AuthManager : MonoBehaviour
 {
     Firebase.Auth.FirebaseAuth auth;
 
-    public delegate IEnumerator AuthCallBack(Task<Firebase.Auth.AuthResult> task, string operation);
-    public event AuthCallBack authCallBack;
+    public delegate IEnumerator UserDataCallBack(Firebase.Auth.FirebaseUser user, string operation);
+    public event UserDataCallBack userDataCallBack;
 
     public void Awake()
     {
@@ -17,16 +18,13 @@ public class AuthManager : MonoBehaviour
         Debug.Log("auth");
     }
 
-    public void SignUpWithNewUser(string email, string password)
+    public async void SignUpWithNewUser(string email, string password)
     {
-        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
-        {
-            if(task.Result != null)
-            {
-                Debug.Log("Before StartCoroutine");
-                StartCoroutine(authCallBack(task, "sign_up"));
-                Debug.Log("After StartCoroutine");
-            }      
-        });
-    }   
+        AuthResult result = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+
+        //melhorar isso depois porque precisa ver as excecoes
+
+        if(result != null)
+            StartCoroutine(userDataCallBack(result.User, "sign_up"));
+    }
 }
