@@ -1,3 +1,4 @@
+using Firebase;
 using Firebase.Auth;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,5 +38,20 @@ public class AuthExceptionHandler
         }
 
         return _msg;
+    }
+
+    public static string GetAuthErrorMessage(FirebaseException e)
+    {
+        string errorMsg = "";
+
+        FirebaseException fireBaseEx = e.GetBaseException() as FirebaseException;
+
+        if (fireBaseEx != null)
+        {
+            AuthError authError = (Firebase.Auth.AuthError)fireBaseEx.ErrorCode;
+            errorMsg = GetExceptionMessage(authError);
+        }
+
+        return errorMsg;
     }
 }

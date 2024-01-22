@@ -32,7 +32,6 @@ public class AuthManager : MonoBehaviour
         try
         {
             AuthResult result = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
-
             Debug.Log("Result");
 
             if (result != null)
@@ -47,18 +46,10 @@ public class AuthManager : MonoBehaviour
         {
             Debug.Log("Operation has found an error");
 
-            FirebaseException fireBaseEx = e.GetBaseException() as FirebaseException;
+            _errorMsg = AuthExceptionHandler.GetAuthErrorMessage(e);
+            Debug.Log($"error: {_errorMsg}");
 
-            if (fireBaseEx != null)
-            {
-                AuthError authError = (Firebase.Auth.AuthError)fireBaseEx.ErrorCode;
-
-                _errorMsg = AuthExceptionHandler.GetExceptionMessage(authError);
-
-                Debug.Log($"error: {_errorMsg}");
-
-                warnMessage?.Invoke(_errorMsg);
-            }
+            warnMessage?.Invoke(_errorMsg);
         }
     }
 
@@ -67,7 +58,6 @@ public class AuthManager : MonoBehaviour
         try
         {
             AuthResult result = await auth.SignInWithEmailAndPasswordAsync(email, password);
-
             Debug.Log("Result");
 
             if (result != null)
@@ -76,14 +66,14 @@ public class AuthManager : MonoBehaviour
                 userDataCallBack?.Invoke(result.User, "_login");
             }
         }
-        catch(FirebaseException e)
+        catch (FirebaseException e)
         {
+            Debug.Log("Operation has found an error");
 
+            _errorMsg = AuthExceptionHandler.GetAuthErrorMessage(e);
+            Debug.Log($"error: {_errorMsg}");
+
+            warnMessage?.Invoke(_errorMsg);
         }
-
-        //melhorar isso depois porque precisa ver as excecoes
-
-        if (result != null)
-            userDataCallBack?.Invoke(result.User, "login");
     }
 }

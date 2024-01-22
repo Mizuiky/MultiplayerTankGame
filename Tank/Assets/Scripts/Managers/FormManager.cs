@@ -79,21 +79,20 @@ public class FormManager : MonoBehaviour
 
     public void HandleUserData(Firebase.Auth.FirebaseUser user, string operation)
     {
-        Debug.Log("handle User Data");
+        Debug.Log("handle User Data");  
 
-        UpdateStatus($"Welcome back {user.Email}");
-
-        StartCoroutine(WaitLoadSceneCoroutine());
-     
-        Debug.Log("will active new scene");
+        StartCoroutine(WaitLoadSceneCoroutine(user));
     }
 
-    public IEnumerator WaitLoadSceneCoroutine()
+    public IEnumerator WaitLoadSceneCoroutine(FirebaseUser user)
     {
-        UpdateStatus("Loading Game Scene");
+        UpdateStatus($"Welcome back {user.Email}");
+        yield return new WaitForSeconds(3f);
 
+        UpdateStatus("Loading Game Scene");
         yield return new WaitForSeconds(2f);
 
+        Debug.Log("will active new scene");
         SceneManager.LoadScene(1);
 
     }
@@ -101,7 +100,6 @@ public class FormManager : MonoBehaviour
     public void UpdateStatus(string message)
     {
         Debug.Log("update message");
-
         _statusText.text = message;
     }
 
