@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Firebase.Auth;
 using UnityEngine.SceneManagement;
+using System;
 
 public class FormManager : MonoBehaviour
 {
@@ -39,6 +40,7 @@ public class FormManager : MonoBehaviour
         UpdateStatus("Connection Status");
 
         authManager.userDataCallBack += HandleUserData;
+        authManager.warnMessage += UpdateStatus;
 
         _regexPattern = @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@"
         + @"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\."
@@ -64,35 +66,48 @@ public class FormManager : MonoBehaviour
 
     public void OnLogin()
     {
+        authManager.LoginWithExistingUser(_emailField.text, _passwordField.text);
         Debug.Log("Login");
-    }
-
-    public IEnumerator HandleUserData(Firebase.Auth.FirebaseUser user, string operation)
-    {
-        Debug.Log("handle User Data");
-
-        Debug.Log("Loading the Game Scene");
-
-        yield return new WaitForSeconds(1.5f);
-
-        Debug.Log("will active new scene");
-
-        SceneManager.LoadScene(1);
+        return;
     }
 
     public void OnSignUp()
     {
-        authManager.SignUpWithNewUser(_emailField.text, _passwordField.text);
+        authManager.SignUpWithNewUserAsync(_emailField.text, _passwordField.text);
         Debug.Log("SignUp");
+    }
+
+    public void HandleUserData(Firebase.Auth.FirebaseUser user, string operation)
+    {
+        Debug.Log("handle User Data");
+
+        UpdateStatus($"Welcome back {user.Email}");
+
+        StartCoroutine(WaitLoadSceneCoroutine());
+     
+        Debug.Log("will active new scene");
+    }
+
+    public IEnumerator WaitLoadSceneCoroutine()
+    {
+        UpdateStatus("Loading Game Scene");
+
+        yield return new WaitForSeconds(2f);
+
+        SceneManager.LoadScene(1);
+
+    }
+
+    public void UpdateStatus(string message)
+    {
+        Debug.Log("update message");
+
+        _statusText.text = message;
     }
 
     private void OnDestroy()
     {
         authManager.userDataCallBack -= HandleUserData;
-    }
-
-    private void UpdateStatus(string message)
-    {
-        _statusText.text = message;
+        authManager.warnMessage -= UpdateStatus;
     }
 }
